@@ -1,11 +1,10 @@
 using .TensorNetworkDiagrams
 
-
-mps = MPS(length=4)
+mps = MPS(length = 4)
 tikz = to_tikz(mps)
 
-save_tex(tikz, "mps.tex")
+save_tex(tikz, "examples/mps.tex")
 
 mpo = MPO(4)
 tikz_mpo = to_tikz(mpo)
-save_tex(tikz_mpo, "mpo.tex")
+save_tex(tikz_mpo, "examples/mpo.tex")

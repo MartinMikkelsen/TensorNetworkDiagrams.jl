@@ -60,35 +60,37 @@ function MPS(;
 end
 
 function MPO(
-    length::Int;
-    bond_label::Union{String, Nothing} = nothing,
-    upper_physical_label::Union{String, Nothing} = nothing,
-    lower_physical_label::Union{String, Nothing} = nothing,
-    boundary_labels::Tuple{String, String} = ("1", "1"),
-    node_spacing::Float64 = 1.0,
-    node_style::String = node("circle", "orange")
-)
+        length::Int;
+        bond_label::Union{String, Nothing} = nothing,
+        upper_physical_label::Union{String, Nothing} = nothing,
+        lower_physical_label::Union{String, Nothing} = nothing,
+        boundary_labels::Tuple{String, String} = ("1", "1"),
+        node_spacing::Float64 = 1.0,
+        node_style::String = node("circle", "orange")
+    )
     # Generate default labels if not provided
     bond_labels = if bond_label === nothing
         ["\\alpha_$i" for i in 1:(length - 1)]
     else
         ["$(bond_label)_$i" for i in 1:(length - 1)]
     end
-    
+
     upper_physical_labels = if upper_physical_label === nothing
         ["\\beta_$i" for i in 1:length]
     else
         ["$(upper_physical_label)_$i" for i in 1:length]
     end
-    
+
     lower_physical_labels = if lower_physical_label === nothing
         ["\\kappa_$i" for i in 1:length]
     else
         ["$(lower_physical_label)_$i" for i in 1:length]
     end
-    
-    return MPO(length, bond_labels, upper_physical_labels, lower_physical_labels, 
-               boundary_labels, node_spacing, node_style)
+
+    return MPO(
+        length, bond_labels, upper_physical_labels, lower_physical_labels,
+        boundary_labels, node_spacing, node_style
+    )
 end
 
 function to_tikz(mps::MPS)
@@ -128,40 +130,40 @@ end
 function to_tikz(mpo::MPO)
     io = IOBuffer()
     println(io, "\\begin{tikzpicture}")
-    
+
     # Draw left boundary bond
     println(io, "  \\draw[black] (-$(mpo.node_spacing),0) -- node [label={[shift={(0,-0.15)}]\$$(mpo.boundary_labels[1])\$}] {} (0,0);")
-    
+
     # Draw internal bonds
-    for i in 1:mpo.length-1
-        x = (i-1) * mpo.node_spacing
+    for i in 1:(mpo.length - 1)
+        x = (i - 1) * mpo.node_spacing
         println(io, "  \\draw[black] ($x,0) -- node [label={[shift={(0,-0.15)}]\$$(mpo.bond_labels[i])\$}] {} ++ ($(mpo.node_spacing),0);")
     end
-    
+
     # Draw right boundary bond
     x = (mpo.length - 1) * mpo.node_spacing
     println(io, "  \\draw[black] ($x,0) -- node [label={[shift={(0,-0.15)}]\$$(mpo.boundary_labels[2])\$}] {} ++ ($(mpo.node_spacing),0);")
-    
+
     # Draw upper physical legs
-    for i in 0:mpo.length-1
+    for i in 0:(mpo.length - 1)
         x = i * mpo.node_spacing
-        println(io, "  \\draw[black] ($x,0) -- node [label={[shift={(0.0,0.2)}]\$$(mpo.upper_physical_labels[i+1])\$}] {} ++ (0,0.7);")
+        println(io, "  \\draw[black] ($x,0) -- node [label={[shift={(0.0,0.2)}]\$$(mpo.upper_physical_labels[i + 1])\$}] {} ++ (0,0.7);")
     end
-    
+
     # Draw lower physical legs
-    for i in 0:mpo.length-1
+    for i in 0:(mpo.length - 1)
         x = i * mpo.node_spacing
-        println(io, "  \\draw[black] ($x,0) -- node [label={[shift={(0.0,-1.0)}]\$$(mpo.lower_physical_labels[i+1])\$}] {} ++ (0,-0.7);")
+        println(io, "  \\draw[black] ($x,0) -- node [label={[shift={(0.0,-1.0)}]\$$(mpo.lower_physical_labels[i + 1])\$}] {} ++ (0,-0.7);")
     end
-    
+
     # Draw nodes
-    for i in 0:mpo.length-1
+    for i in 0:(mpo.length - 1)
         x = i * mpo.node_spacing
         println(io, "  \\node[$(mpo.node_style)] at ($x,0){};")
     end
-    
+
     println(io, "\\end{tikzpicture}")
-    String(take!(io))
+    return String(take!(io))
 end
 
 function save_tex(tikz_code::String, filename::String; standalone = true, cleanup = true)
@@ -188,4 +190,4 @@ function save_tex(tikz_code::String, filename::String; standalone = true, cleanu
 end
 
 
-end 
+end
