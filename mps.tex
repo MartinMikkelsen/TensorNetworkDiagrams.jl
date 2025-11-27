@@ -1,0 +1,19 @@
+\documentclass[tikz,border=2mm]{standalone}
+\begin{document}
+\begin{tikzpicture}
+  \draw[black] (-1.0,0) -- node [label={[shift={(0,-0.15)}]$1$}] {} (0,0);
+  \draw[black] (0.0,0) -- node [label={[shift={(0,-0.15)}]$\alpha_1$}] {} ++ (1.0,0);
+  \draw[black] (1.0,0) -- node [label={[shift={(0,-0.15)}]$\alpha_2$}] {} ++ (1.0,0);
+  \draw[black] (2.0,0) -- node [label={[shift={(0,-0.15)}]$\alpha_3$}] {} ++ (1.0,0);
+  \draw[black] (3.0,0) -- node [label={[shift={(0,-0.15)}]$1$}] {} ++ (1.0,0);
+  \draw[black] (0.0,0) -- node [label={[shift={(0,-1)}]$\kappa_1$}] {} ++ (0,-0.7);
+  \draw[black] (1.0,0) -- node [label={[shift={(0,-1)}]$\kappa_2$}] {} ++ (0,-0.7);
+  \draw[black] (2.0,0) -- node [label={[shift={(0,-1)}]$\kappa_3$}] {} ++ (0,-0.7);
+  \draw[black] (3.0,0) -- node [label={[shift={(0,-1)}]$\kappa_4$}] {} ++ (0,-0.7);
+  \node[draw,shape=circle,fill=red,scale=0.75,label={[shift={(0,0.30)}]$A_1$}] at (0.0,0){};
+  \node[draw,shape=circle,fill=red,scale=0.75,label={[shift={(0,0.30)}]$A_2$}] at (1.0,0){};
+  \node[draw,shape=circle,fill=red,scale=0.75,label={[shift={(0,0.30)}]$A_3$}] at (2.0,0){};
+  \node[draw,shape=circle,fill=red,scale=0.75,label={[shift={(0,0.30)}]$A_4$}] at (3.0,0){};
+\end{tikzpicture}
+
+\end{document}
