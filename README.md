@@ -30,4 +30,4 @@ tectonic mps.tex
 tectonic mpo.tex
 tectonic MPSMPO.tex
 ```
-<img src="./examples/mpsmpo.png" width="150">
+<img src="./examples/mpsmpo.png" width="350">
