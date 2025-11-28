@@ -21,7 +21,6 @@ struct MPO <: TensorNetwork
     node_style::String
 end
 
-
 function MPS(
         length::Int;
         bond_label::Union{String, Nothing} = nothing,

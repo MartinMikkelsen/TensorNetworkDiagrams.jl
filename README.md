@@ -1,5 +1,5 @@
 # TensorNetworkDiagrams.jl
-Package to draw tensor networks
+Package to draw tensor networks. You will need to have [tectonic](https://github.com/tectonic-typesetting/tectonic) installed to compile the generated LaTeX files and (pdf2svg)https://github.com/dawbarton/pdf2svg to convert PDFs to SVGs.
 
 ## Installation
 
@@ -15,21 +15,19 @@ Pkg.add("TensorNetworkDiagrams")
 To create and visualize tensor network diagrams, you can use the following example code:
 
 ```juliajulia
-using TensorNetworkDiagrams
+mps = MPS(4, boundary_labels = ("", ""))
 
-mps = MPS(length = 4)
-tikz = to_tikz(mps)
+save(mps, TEX("mps"))
 
-save_tex(tikz, "examples/mps.tex")
+mpo = MPO(5, boundary_labels = ("", ""))
 
-mpo = MPO(4)
-tikz_mpo = to_tikz(mpo)
-save_tex(tikz_mpo, "examples/mpo.tex")
-````
-
-And then compile the generated `.tex` files using tectonic to visualize the tensor networks.
-
+save(mps, TEX("mpo"))
+save(mps, mpo, TEX("MPSMPO", standalone = true))
 ```
-tectonic examples/mps.tex
-tectonic examples/mpo.tex
+After this run the follow commands in your terminal to generate the PDF files:
+```bash
+tectonic mps.tex
+tectonic mpo.tex
+tectonic MPSMPO.tex
 ```
+![TensorNetwork](examples/mpsmpo.pdf)

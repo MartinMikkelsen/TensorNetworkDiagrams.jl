@@ -1,14 +1,6 @@
-export PDF, TEX, TikZ, SVG, save
+export TEX, TikZ, save
 
 abstract type SaveFormat end
-
-struct PDF <: SaveFormat
-    filename::String
-    transparent::Bool
-    cleanup::Bool
-    PDF(filename::String; transparent::Bool = false, cleanup::Bool = true) =
-        new(_remove_extension(filename, ".pdf"), transparent, cleanup)
-end
 
 struct TEX <: SaveFormat
     filename::String
@@ -21,11 +13,6 @@ end
 struct TikZ <: SaveFormat
     filename::String
     TikZ(filename::String) = new(_remove_extension(filename, ".tikz"))
-end
-
-struct SVG <: SaveFormat
-    filename::String
-    SVG(filename::String) = new(_remove_extension(filename, ".svg"))
 end
 
 function _remove_extension(filename::String, ext::String)
@@ -141,7 +128,8 @@ function save(network::TensorNetwork, format::TEX)
 
     filename = format.filename * ".tex"
     write(filename, tex_content)
-    return println("✓ Saved to $filename")
+    println("✓ Saved to $filename")
+    return println("  Compile with: tectonic $filename")
 end
 
 function save(network::TensorNetwork, format::TikZ)
@@ -149,50 +137,6 @@ function save(network::TensorNetwork, format::TikZ)
     filename = format.filename * ".tikz"
     write(filename, tikz_code)
     return println("✓ Saved TikZ code to $filename")
-end
-
-function save(network::TensorNetwork, format::PDF)
-    tex_format = TEX(format.filename, standalone = true, transparent = format.transparent)
-    save(network, tex_format)
-
-    tex_file = format.filename * ".tex"
-    pdf_file = format.filename * ".pdf"
-
-    return try
-        run(`sh -c "tectonic $tex_file"`)
-        println("✓ Compiled to $pdf_file")
-
-        if format.cleanup
-            aux_extensions = [".aux", ".log", ".fls", ".fdb_latexmk", ".synctex.gz", ".tex"]
-            for ext in aux_extensions
-                file = format.filename * ext
-                isfile(file) && rm(file)
-            end
-            println("✓ Cleaned up auxiliary files")
-        end
-    catch e
-        @warn "Could not compile PDF. Tectonic may not be in PATH." exception = e
-        println("  TEX file saved at $tex_file")
-        println("  Compile manually with: tectonic $tex_file")
-    end
-end
-
-function save(network::TensorNetwork, format::SVG)
-    pdf_format = PDF(format.filename, transparent = true, cleanup = false)
-    save(network, pdf_format)
-
-    pdf_file = format.filename * ".pdf"
-    svg_file = format.filename * ".svg"
-
-    return try
-        run(`sh -c "pdf2svg $pdf_file $svg_file"`)
-        println("✓ Converted to $svg_file")
-        rm(pdf_file)
-    catch e
-        @warn "Could not convert to SVG. pdf2svg may not be installed." exception = e
-        println("  PDF file available at $pdf_file")
-        println("  Convert manually with: pdf2svg $pdf_file $svg_file")
-    end
 end
 
 function save(mps::MPS, mpo::MPO, format::TEX; vertical_spacing::Float64 = 0.7)
@@ -212,7 +156,8 @@ function save(mps::MPS, mpo::MPO, format::TEX; vertical_spacing::Float64 = 0.7)
 
     filename = format.filename * ".tex"
     write(filename, tex_content)
-    return println("✓ Saved to $filename")
+    println("✓ Saved to $filename")
+    return println("  Compile with: tectonic $filename")
 end
 
 function save(mps::MPS, mpo::MPO, format::TikZ; vertical_spacing::Float64 = 0.7)
@@ -220,52 +165,4 @@ function save(mps::MPS, mpo::MPO, format::TikZ; vertical_spacing::Float64 = 0.7)
     filename = format.filename * ".tikz"
     write(filename, tikz_code)
     return println("✓ Saved TikZ code to $filename")
-end
-
-function save(mps::MPS, mpo::MPO, format::PDF; vertical_spacing::Float64 = 0.7)
-    tex_file = format.filename * ".tex"
-    bg_option = format.transparent ? ",transparent" : ""
-    tikz_code = to_tikz(mps, mpo, vertical_spacing = vertical_spacing)
-
-    tex_content = """
-    \\documentclass[tikz,border=2mm$bg_option]{standalone}
-    \\begin{document}
-    $tikz_code
-    \\end{document}
-    """
-    write(tex_file, tex_content)
-
-    return try
-        run(`sh -c "tectonic $tex_file"`)
-        println("✓ Compiled to $(format.filename).pdf")
-
-        if format.cleanup
-            aux_extensions = [".aux", ".log", ".fls", ".fdb_latexmk", ".synctex.gz", ".tex"]
-            for ext in aux_extensions
-                file = format.filename * ext
-                isfile(file) && rm(file)
-            end
-            println("✓ Cleaned up auxiliary files")
-        end
-    catch e
-        @warn "Could not compile PDF" exception = e
-        println("  TEX file saved at $tex_file")
-    end
-end
-
-function save(mps::MPS, mpo::MPO, format::SVG; vertical_spacing::Float64 = 0.7)
-    pdf_format = PDF(format.filename, transparent = true, cleanup = false)
-    save(mps, mpo, pdf_format, vertical_spacing = vertical_spacing)
-
-    pdf_file = format.filename * ".pdf"
-    svg_file = format.filename * ".svg"
-
-    return try
-        run(`sh -c "pdf2svg $pdf_file $svg_file"`)
-        println("✓ Converted to $svg_file")
-        rm(pdf_file)
-    catch e
-        @warn "Could not convert to SVG" exception = e
-        println("  PDF file available at $pdf_file")
-    end
 end
