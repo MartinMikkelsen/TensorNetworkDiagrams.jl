@@ -30,4 +30,4 @@ tectonic mps.tex
 tectonic mpo.tex
 tectonic MPSMPO.tex
 ```
-![TensorNetwork](./examples/mpsmpo.pdf)
+![TensorNetwork](https://github.com/MartinMikkelsen/TensorNetworkDiagrams.jl/blob/main/examples/mpsmpo.pdf)
