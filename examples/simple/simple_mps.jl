@@ -7,7 +7,7 @@ save(mps, TikZ("examples/simple/mps"))
 
 mpo = MPO(5, boundary_labels = ("", ""))
 
-save(mps, TEX("examples/simple/mpo"))
-save(mps, TikZ("examples/simple/mpo"))
+save(mpo, TEX("examples/simple/mpo"))
+save(mpo, TikZ("examples/simple/mpo"))
 
 save(mps, mpo, TEX("examples/simple/mpsmpo", standalone = true))
